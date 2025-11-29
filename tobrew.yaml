@@ -8,12 +8,12 @@ github:
     repo: toxjc
     tap_repo: homebrew-tap
 build:
-    command: go build -o build/{{.Name}} ./cmd/toxjc
+    command: go build -o build/{{.Name}} .
 formula:
     install: |-
-        system "go", "build", "-o", "toxjc", "./cmd/toxjc"
+        system "go", "build", "-o", "toxjc", "."
         bin.install "toxjc"
-    test: assert_match "toxjc", shell_output("#{bin}/toxjc 2>&1", 1)
+    test: assert_match "toxjc", shell_output("#{bin}/toxjc version")
     caveats: |-
         toxjc has been installed!
 

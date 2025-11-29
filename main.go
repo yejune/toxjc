@@ -6,8 +6,10 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/yejune/toxjc"
+	"github.com/yejune/toxjc/lib"
 )
+
+var version = "dev"
 
 func printUsage() {
 	fmt.Println("toxjc - 파일 형식 변환 도구")
@@ -15,6 +17,7 @@ func printUsage() {
 	fmt.Println("사용법:")
 	fmt.Println("  toxjc <input> <output>    파일 변환 (출력 확장자로 형식 결정)")
 	fmt.Println("  toxjc detect <file>       파일 타입 감지")
+	fmt.Println("  toxjc version             버전 정보")
 	fmt.Println()
 	fmt.Println("지원 형식:")
 	fmt.Println("  입력: csv, xlsx, xls, json (자동 감지)")
@@ -34,6 +37,12 @@ func main() {
 	}
 
 	cmd := os.Args[1]
+
+	// version 명령
+	if cmd == "version" || cmd == "--version" || cmd == "-v" {
+		fmt.Printf("toxjc version %s\n", version)
+		return
+	}
 
 	// detect 명령
 	if cmd == "detect" {
