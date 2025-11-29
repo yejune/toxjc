@@ -1,0 +1,20 @@
+name: toxjc
+language: go
+description: File format conversion utility (CSV, JSON, XLSX, XLS)
+homepage: https://github.com/yejune/toxjc
+license: MIT
+github:
+    user: yejune
+    repo: toxjc
+    tap_repo: homebrew-tap
+build:
+    command: go build -o build/{{.Name}} ./cmd/toxjc
+formula:
+    install: |-
+        system "go", "build", "-o", "toxjc", "./cmd/toxjc"
+        bin.install "toxjc"
+    test: assert_match "toxjc", shell_output("#{bin}/toxjc 2>&1", 1)
+    caveats: |-
+        toxjc has been installed!
+
+        Run 'toxjc --help' to get started.
