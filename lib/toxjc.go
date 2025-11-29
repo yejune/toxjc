@@ -65,7 +65,7 @@ func sanitize(s string) string {
 
 // =============== Detect ===============
 
-// Detect: 파일 시그니처로 실제 타입 감지 (csv, xlsx, xls, json)
+// Detect: 파일 시그니처로 실제 타입 감지 (csv, xlsx, xls, json만 지원)
 func Detect(filePath string) (string, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -91,17 +91,34 @@ func Detect(filePath string) (string, error) {
 		return "xls", nil
 	}
 
-	// JSON or CSV
+	// 텍스트 파일 체크 (바이너리면 not supported)
 	file.Seek(0, 0)
-	buf := make([]byte, 1024)
+	buf := make([]byte, 4096)
 	n, _ = file.Read(buf)
-	content := strings.TrimSpace(string(buf[:n]))
 
-	if len(content) > 0 && (content[0] == '[' || content[0] == '{') {
+	// 널 바이트 있으면 바이너리
+	for i := 0; i < n; i++ {
+		if buf[i] == 0 {
+			return "", fmt.Errorf("not supported")
+		}
+	}
+
+	content := strings.TrimSpace(string(buf[:n]))
+	if len(content) == 0 {
+		return "", fmt.Errorf("not supported")
+	}
+
+	// JSON: [ 또는 { 로 시작
+	if content[0] == '[' || content[0] == '{' {
 		return "json", nil
 	}
 
-	return "csv", nil
+	// CSV: 콤마 또는 탭 구분자가 있는 텍스트
+	if strings.Contains(content, ",") || strings.Contains(content, "\t") {
+		return "csv", nil
+	}
+
+	return "", fmt.Errorf("not supported")
 }
 
 // =============== Read ===============
